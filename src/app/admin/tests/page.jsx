@@ -206,7 +206,7 @@ export default function AdminTestsPage() {
 		} catch (err) {
 			console.error('Error fetching tests or categories:', err);
 			setError('Failed to load tests or categories.');
-			toast({
+			addToast({
 				title: 'Error',
 				description: 'Failed to load tests or categories. Please try again.',
 				variant: 'destructive',
@@ -216,9 +216,7 @@ export default function AdminTestsPage() {
 		}
 	};
 
-	useEffect(() => {
-		fetchTestsAndCategories();
-	}, []);
+	
 
 	const handleTestSubmit = async (e) => {
 		e.preventDefault();

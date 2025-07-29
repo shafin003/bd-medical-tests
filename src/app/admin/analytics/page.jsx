@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -11,7 +10,6 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToast } = useToast();
-  const router = useRouter();
 
   const fetchAnalyticsData = async () => {
     setLoading(true);
@@ -37,17 +35,8 @@ export default function AdminAnalyticsPage() {
   };
 
   useEffect(() => {
-    const checkAuthAndFetchData = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push('/admin/login');
-        return;
-      }
-      fetchAnalyticsData();
-    };
-
-    checkAuthAndFetchData();
-  }, [router]);
+    fetchAnalyticsData();
+  }, []);
 
   if (loading) {
     return (

@@ -59,6 +59,10 @@ export function Footer() {
                 Help Center
               </Link>
             </li>
+            <li>
+              <Link href="/admin/dashboard" className="hover:underline">
+              Dashboard</Link>
+            </li>
           </ul>
         </div>
 

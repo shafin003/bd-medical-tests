@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Hospital } from '@/types/api';
+import { useRouter } from 'next/navigation';
 
 export default function AdminHospitalsPage() {
   const [hospitals, setHospitals] = useState([]);
@@ -125,9 +125,7 @@ export default function AdminHospitalsPage() {
     }
   };
 
-  useEffect(() => {
-    fetchHospitals();
-  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -224,7 +222,7 @@ export default function AdminHospitalsPage() {
     } catch (err) {
       console.error("Error deleting hospital:", err);
       setError("Failed to delete hospital.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to delete hospital. Please try again.",
         variant: "destructive",
