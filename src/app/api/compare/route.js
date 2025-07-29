@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { CompareRequest, CompareResponse, Hospital, MedicalTest, HospitalService } from '@/types/api';
 
-export async function POST(request: NextRequest): Promise<NextResponse<CompareResponse | { error: string }>> {
-  const { hospitalIds, testId }: CompareRequest = await request.json();
+export async function POST(request) {
+  const { hospitalIds, testId } = await request.json();
 
   if (!hospitalIds || hospitalIds.length === 0) {
     return NextResponse.json({ error: 'No hospital IDs provided for comparison' }, { status: 400 });
   }
 
   try {
-    const hospitalsData: (Hospital & { services: (HospitalService & { test: MedicalTest })[] })[] = [];
+    const hospitalsData = [];
 
     for (const hospitalId of hospitalIds) {
       // Fetch hospital details
@@ -53,10 +52,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<CompareRe
       hospitalsData.push({
         ...hospital,
         services: services || [],
-      } as Hospital & { services: (HospitalService & { test: MedicalTest })[] });
+      });
     }
 
-    let testComparison: CompareResponse['testComparison'] = undefined;
+    let testComparison = undefined;
 
     if (testId) {
       const { data: test, error: testError } = await supabase
@@ -80,13 +79,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<CompareRe
           };
         });
         testComparison = {
-          test: test as MedicalTest,
+          test: test,
           prices,
         };
       }
     }
 
-    const response: CompareResponse = {
+    const response = {
       hospitals: hospitalsData,
       testComparison,
     };

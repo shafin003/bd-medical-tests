@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { Hospital, MedicalTest, HospitalService } from '@/types/api';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse<Hospital | { error: string }>> {
+  request,
+  { params }
+) {
   const hospitalId = params.id;
 
   try {
@@ -44,7 +43,7 @@ export async function GET(
       services: services || [],
     };
 
-    return NextResponse.json(hospitalWithServices as Hospital & { services: (HospitalService & { medical_tests: MedicalTest })[] });
+    return NextResponse.json(hospitalWithServices);
   } catch (error) {
     console.error('Error fetching hospital details:', error);
     return NextResponse.json({ error: 'Failed to fetch hospital details' }, { status: 500 });

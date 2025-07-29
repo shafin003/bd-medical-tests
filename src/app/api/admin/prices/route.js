@@ -10,12 +10,12 @@ async function isAdmin() {
   return { authenticated: true, user };
 }
 
-export async function PUT(request: NextRequest): Promise<NextResponse<{ message: string } | { error: string }>> {
+export async function PUT(request) {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
   try {
-    const updates: { id: string; price?: number; discounted_price?: number; discount_percentage?: number; available?: boolean; home_collection_available?: boolean; home_collection_fee?: number; report_delivery_time?: string; online_report?: boolean; emergency_available?: boolean; notes?: string; }[] = await request.json();
+    const updates = await request.json();
 
     if (!Array.isArray(updates) || updates.length === 0) {
       return NextResponse.json({ error: 'Invalid request body. Expected an array of updates.' }, { status: 400 });

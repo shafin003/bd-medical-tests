@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { Hospital } from '@/types/api';
 
 // Helper function to check admin authentication
 async function isAdmin() {
@@ -13,7 +12,7 @@ async function isAdmin() {
   return { authenticated: true, user };
 }
 
-export async function GET(): Promise<NextResponse<Hospital[] | { error: string }>> {
+export async function GET() {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
@@ -34,12 +33,12 @@ export async function GET(): Promise<NextResponse<Hospital[] | { error: string }
   }
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse<Hospital | { error: string }>> {
+export async function POST(request) {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
   try {
-    const newHospital: Hospital = await request.json();
+    const newHospital = await request.json();
 
     const { data, error } = await supabase
       .from('hospitals')

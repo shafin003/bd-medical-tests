@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { MedicalTest } from '@/types/api';
 
 // Helper function to check admin authentication
 async function isAdmin() {
@@ -12,9 +11,9 @@ async function isAdmin() {
 }
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse<MedicalTest | { error: string }>> {
+  request,
+  { params }
+) {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
@@ -47,16 +46,16 @@ export async function GET(
 }
 
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse<MedicalTest | { error: string }>> {
+  request,
+  { params }
+) {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
   const testId = params.id;
 
   try {
-    const updatedMedicalTest: MedicalTest = await request.json();
+    const updatedMedicalTest = await request.json();
 
     const { data, error } = await supabase
       .from('medical_tests')
@@ -82,9 +81,9 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse<{ message: string } | { error: string }>> {
+  request,
+  { params }
+) {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 

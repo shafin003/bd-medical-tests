@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-export async function GET(request: NextRequest): Promise<NextResponse<string[]>> {
+export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('query');
 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<string[]>>
 
     if (locationError) throw locationError;
 
-    const suggestions = new Set<string>();
+    const suggestions = new Set();
 
     hospitalNames?.forEach(h => suggestions.add(h.name));
     testNames?.forEach(t => suggestions.add(t.name));

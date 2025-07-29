@@ -10,12 +10,7 @@ async function isAdmin() {
   return { authenticated: true, user };
 }
 
-type PopularSearch = {
-  query: string;
-  search_count: number;
-};
-
-export async function GET(): Promise<NextResponse<{ popularSearches: PopularSearch[] } | { error: string }>> {
+export async function GET() {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 

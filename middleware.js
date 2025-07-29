@@ -1,12 +1,16 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from './src/lib/supabase/server';
 
-export async function middleware(request: NextRequest) {
-  const { supabase, response } = createServerSupabaseClient(request);
+export async function middleware(request) {
+  const { supabase, response } = createServerSupabaseClient();
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user && request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin/login')) {
+  if (
+    !user &&
+    request.nextUrl.pathname.startsWith('/admin') &&
+    !request.nextUrl.pathname.startsWith('/admin/login')
+  ) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = '/admin/login';
     return NextResponse.redirect(redirectUrl);
@@ -21,3 +25,4 @@ export const config = {
     '/api/admin/:path*',
   ],
 };
+

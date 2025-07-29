@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { Hospital } from '@/types/api';
-
-interface HospitalParams {
-  id: string;
-}
 
 // Helper function to check admin authentication
 async function isAdmin() {
@@ -18,9 +13,9 @@ async function isAdmin() {
 }
 
 export async function GET(
-  request: NextRequest,
-  context: { params: HospitalParams }
-): Promise<NextResponse<Hospital | { error: string }>> {
+  request,
+  context
+) {
   const { params } = context;
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
@@ -54,9 +49,9 @@ export async function GET(
 }
 
 export async function PUT(
-  request: NextRequest,
-  context: { params: HospitalParams }
-): Promise<NextResponse<Hospital | { error: string }>> {
+  request,
+  context
+) {
   const { params } = context;
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
@@ -64,7 +59,7 @@ export async function PUT(
   const hospitalId = params.id;
 
   try {
-    const updatedHospital: Hospital = await request.json();
+    const updatedHospital = await request.json();
 
     const { data, error } = await supabase
       .from('hospitals')
@@ -90,9 +85,9 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  context: { params: HospitalParams }
-): Promise<NextResponse<{ message: string } | { error: string }>> {
+  request,
+  context
+) {
   const { params } = context;
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;

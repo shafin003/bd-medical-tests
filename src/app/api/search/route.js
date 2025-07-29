@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SearchRequest, SearchResponse, Hospital, MedicalTest, TestCategory } from '@/types/api';
 import { supabase } from '@/lib/supabase';
 
-export async function POST(request: NextRequest): Promise<NextResponse<SearchResponse>> {
-  const searchData: SearchRequest = await request.json();
+export async function POST(request) {
+  const searchData = await request.json();
   const { query, filters, sort, page = 1, limit = 10 } = searchData;
 
   try {
@@ -14,7 +13,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     if (query) {
       const { data: rpcHospitals, error: rpcHospitalError } = await supabase.rpc('search_hospitals', { search_query: query });
       if (rpcHospitalError) throw rpcHospitalError;
-      const rpcHospitalIds = rpcHospitals.map((h: Hospital) => h.id);
+      const rpcHospitalIds = rpcHospitals.map((h) => h.id);
       if (rpcHospitalIds.length > 0) {
         hospitalQuery = hospitalQuery.in('id', rpcHospitalIds);
       } else {
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     if (query) {
       const { data: rpcTests, error: rpcTestError } = await supabase.rpc('search_tests', { search_query: query });
       if (rpcTestError) throw rpcTestError;
-      const rpcTestIds = rpcTests.map((t: MedicalTest) => t.id);
+      const rpcTestIds = rpcTests.map((t) => t.id);
       if (rpcTestIds.length > 0) {
         testQuery = testQuery.in('id', rpcTestIds);
       } else {
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
       const highestPrice = prices.length > 0 ? Math.max(...prices) : 0;
       const availableHospitals = prices.length;
 
-      let category: TestCategory = { id: '', name: t.category_name || '', description: '', sort_order: 0 };
+      let category = { id: '', name: t.category_name || '', description: '', sort_order: 0 };
       if (t.category_id) {
         const { data: categoryData, error: categoryError } = await supabase
           .from('test_categories')
@@ -120,7 +119,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     });
 
     // --- Combine and Sort Results ---
-    let combinedResults: (Hospital | MedicalTest)[] = [];
+    let combinedResults = [];
     combinedResults = combinedResults.concat(hospitalsResults.map(h => ({ ...h, type: 'hospital' })));
     combinedResults = combinedResults.concat(finalFilteredTests);
 
@@ -161,10 +160,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     const endIndex = page * limit;
     const paginatedCombinedResults = combinedResults.slice(startIndex, endIndex);
 
-    const finalHospitals = paginatedCombinedResults.filter(item => item.type === 'hospital') as (Hospital & { relevanceScore: number })[];
-    const finalTests = paginatedCombinedResults.filter(item => item.type === 'test') as (MedicalTest & { category: TestCategory; lowestPrice: number; highestPrice: number; availableHospitals: number })[];
+    const finalHospitals = paginatedCombinedResults.filter(item => item.type === 'hospital');
+    const finalTests = paginatedCombinedResults.filter(item => item.type === 'test');
 
-    const response: SearchResponse = {
+    const response = {
       hospitals: finalHospitals.map(h => ({ ...h, matchingTests: [], relevanceScore: h.rank || 0 })),
       tests: finalTests,
       totalResults: totalResultsCount,

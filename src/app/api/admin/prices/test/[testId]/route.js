@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { HospitalService, Hospital, MedicalTest } from '@/types/api';
 
 // Helper function to check admin authentication
 async function isAdmin() {
@@ -12,9 +11,9 @@ async function isAdmin() {
 }
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { testId: string } }
-): Promise<NextResponse<(HospitalService & { hospitals: Hospital, medical_tests: MedicalTest })[] | { error: string }>> {
+  request,
+  { params }
+) {
   const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { Hospital } from '@/types/api';
 
-export async function GET(): Promise<NextResponse<{ hospitals: Hospital[] | null } | { error: string }>> {
+export async function GET() {
   try {
     const { data: hospitals, error } = await supabase
       .from('hospitals')
