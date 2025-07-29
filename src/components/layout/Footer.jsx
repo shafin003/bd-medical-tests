@@ -18,22 +18,22 @@ export function Footer() {
           <h3 className="text-lg font-semibold">Quick Links</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/" className="hover:underline" prefetch={false}>
+              <Link href="/" className="hover:underline">
                 Home
               </Link>
             </li>
             <li>
-              <Link href="/browse-tests" className="hover:underline" prefetch={false}>
+              <Link href="/browse-tests" className="hover:underline">
                 Browse Tests
               </Link>
             </li>
             <li>
-              <Link href="/browse-hospitals" className="hover:underline" prefetch={false}>
+              <Link href="/browse-hospitals" className="hover:underline">
                 Browse Hospitals
               </Link>
             </li>
             <li>
-              <Link href="/compare" className="hover:underline" prefetch={false}>
+              <Link href="/compare" className="hover:underline">
                 Compare Tests
               </Link>
             </li>
@@ -45,17 +45,17 @@ export function Footer() {
           <h3 className="text-lg font-semibold">Support</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/contact" className="hover:underline" prefetch={false}>
+              <Link href="/contact" className="hover:underline">
                 Contact Us
               </Link>
             </li>
             <li>
-              <Link href="/faq" className="hover:underline" prefetch={false}>
+              <Link href="/faq" className="hover:underline">
                 FAQ
               </Link>
             </li>
             <li>
-              <Link href="/help" className="hover:underline" prefetch={false}>
+              <Link href="/help" className="hover:underline">
                 Help Center
               </Link>
             </li>
@@ -67,12 +67,12 @@ export function Footer() {
           <h3 className="text-lg font-semibold">Legal</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/privacy" className="hover:underline" prefetch={false}>
+              <Link href="/privacy" className="hover:underline">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/terms" className="hover:underline" prefetch={false}>
+              <Link href="/terms" className="hover:underline">
                 Terms of Service
               </Link>
             </li>

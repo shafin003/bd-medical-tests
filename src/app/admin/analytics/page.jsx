@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -9,33 +11,43 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToast } = useToast();
+  const router = useRouter();
+
+  const fetchAnalyticsData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/admin/analytics');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setPopularSearches(data.popularSearches || []);
+    } catch (err) {
+      console.error("Error fetching analytics data:", err);
+      setError("Failed to load analytics data. Please try again.");
+      addToast({
+        title: "Error",
+        description: "Failed to load analytics data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalyticsData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('/api/admin/analytics');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setPopularSearches(data.popularSearches || []);
-      } catch (err) {
-        console.error("Error fetching analytics data:", err);
-        setError("Failed to load analytics data. Please try again.");
-        addToast({
-          title: "Error",
-          description: "Failed to load analytics data. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
+    const checkAuthAndFetchData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/admin/login');
+        return;
       }
+      fetchAnalyticsData();
     };
 
-    fetchAnalyticsData();
-  }, []);
+    checkAuthAndFetchData();
+  }, [router]);
 
   if (loading) {
     return (

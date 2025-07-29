@@ -83,8 +83,8 @@ export default function Home() {
                 }}
               />
               <Button
-                size="lg"
-                className="h-12 px-6 bg-white text-sky-600 font-semibold hover:bg-gray-100 hover:text-white hover:bg-sky-600 cursor-pointer [transition:all_0.3s_ease-in-out] rounded-lg"
+                size="md"
+                className="h-12 px-6 bg-emerald-400 text-white font-semibold hover:bg-teal-700 cursor-pointer [transition:all_0.3s_ease-in-out] rounded-lg"
                 onClick={handleSearch}
                 disabled={loading}
               >

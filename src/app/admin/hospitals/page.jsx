@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,7 @@ export default function AdminHospitalsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentHospital, setCurrentHospital] = useState(null); // For editing
   const { addToast } = useToast();
+  const router = useRouter();
 
   // Form states
   const [name, setName] = useState('');
