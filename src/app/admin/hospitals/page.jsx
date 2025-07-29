@@ -21,6 +21,10 @@ export default function AdminHospitalsPage() {
   const { addToast } = useToast();
   const router = useRouter();
 
+  useEffect(() => {
+    fetchHospitals();
+  }, []);
+
   // Form states
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
@@ -105,7 +109,9 @@ export default function AdminHospitalsPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/admin/hospitals');
+      const response = await fetch('/api/admin/hospitals', {
+        credentials: 'include',
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

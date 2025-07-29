@@ -1,16 +1,21 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server.js';
 
-export async function GET(request) {
+// Helper function to check admin authentication
+async function isAdmin(request) {
   const response = NextResponse.next();
-  const { supabase } = await createServerSupabaseClient(request, response);
-
+  const supabase = await createServerSupabaseClient(request, response);
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    console.error("Authentication error in analytics API:", userError);
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   }
+  return { authenticated: true, user, supabase, response };
+}
+
+export async function GET(request) {
+  const { authenticated, response: authResponse, supabase, response } = await isAdmin(request);
+  if (!authenticated) return authResponse;
 
   try {
     // Fetch popular searches
@@ -22,12 +27,12 @@ export async function GET(request) {
 
     if (popularSearchesError) {
       console.error("Error fetching popular searches:", popularSearchesError.message || popularSearchesError);
-      return NextResponse.json({ error: 'Failed to fetch popular searches' }, { status: 500 });
+      return response.json({ error: 'Failed to fetch popular searches' }, { status: 500 });
     }
 
-    return NextResponse.json({ popularSearches: popularSearches || [] });
+    return response.json({ popularSearches: popularSearches || [] });
   } catch (error) {
     console.error('Unexpected error fetching analytics data:', error);
-    return NextResponse.json({ error: 'Failed to fetch analytics data' }, { status: 500 });
+    return response.json({ error: 'Failed to fetch analytics data' }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
-export default function SearchResultsPage() {
+// This component will contain the actual logic and use useSearchParams
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialQuery = searchParams.get('query') || '';
@@ -311,5 +312,14 @@ export default function SearchResultsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// The main page component that uses Suspense
+export default function SearchResultsPage() {
+  return (
+    <Suspense fallback={<div>Loading search results...</div>}>
+      <SearchResultsContent />
+    </Suspense>
   );
 }

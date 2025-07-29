@@ -5,7 +5,11 @@ export async function middleware(request) {
   const response = NextResponse.next();
   const { supabase } = await createServerSupabaseClient(request, response);
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  console.log('Middleware: User:', user);
+  console.log('Middleware: User Error:', userError);
+  console.log('Middleware: Response Headers:', response.headers);
 
   if (
     !user &&

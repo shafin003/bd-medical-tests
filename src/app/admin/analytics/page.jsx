@@ -15,7 +15,9 @@ export default function AdminAnalyticsPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/admin/analytics');
+      const response = await fetch('/api/admin/analytics', {
+        credentials: 'include',
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

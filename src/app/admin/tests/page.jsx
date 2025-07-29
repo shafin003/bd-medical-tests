@@ -23,6 +23,10 @@ export default function AdminTestsPage() {
 	const [currentCategory, setCurrentCategory] = useState(null); // For editing categories
 	const { addToast } = useToast();
 
+	useEffect(() => {
+		fetchTestsAndCategories();
+	}, []);
+
 	// Test Form states
 	const [testName, setTestName] = useState('');
 	const [testCategoryId, setTestCategoryId] = useState('');
@@ -191,8 +195,8 @@ export default function AdminTestsPage() {
 		setError(null);
 		try {
 			const [testsRes, categoriesRes] = await Promise.all([
-				fetch('/api/admin/tests'),
-				fetch('/api/admin/test-categories'),
+				fetch('/api/admin/tests', { credentials: 'include' }),
+				fetch('/api/admin/test-categories', { credentials: 'include' }),
 			]);
 
 			if (!testsRes.ok) throw new Error(`HTTP error! status: ${testsRes.status} for tests`);
