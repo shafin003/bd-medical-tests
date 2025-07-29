@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const supabase = createClient();
+  // Use the already initialized supabase client
+  // const supabase = createClient(); // This line is no longer needed
+  // The 'supabase' object is imported directly from '@/lib/supabase'
+  // So, no need to declare it here again.
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +70,9 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <p>Manage hospitals: add, edit, remove, verify.</p>
-            <Button className="mt-4">Go to Hospitals</Button>
+            <Link href="/admin/hospitals" passHref>
+              <Button className="mt-4">Go to Hospitals</Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -76,7 +82,9 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <p>Manage medical tests, categories, and prices.</p>
-            <Button className="mt-4">Go to Tests</Button>
+            <Link href="/admin/tests" passHref>
+              <Button className="mt-4">Go to Tests</Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -86,7 +94,9 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <p>View popular searches, user behavior, and performance metrics.</p>
-            <Button className="mt-4">View Analytics</Button>
+            <Link href="/admin/analytics" passHref>
+              <Button className="mt-4">View Analytics</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

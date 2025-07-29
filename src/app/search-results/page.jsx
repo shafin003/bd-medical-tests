@@ -275,7 +275,7 @@ export default function SearchResultsPage() {
                   <CardContent>
                     <p className="text-sm text-muted-foreground">Rating: {hospital.rating} ({hospital.total_reviews} reviews)</p>
                     <Link href={`/hospitals/${hospital.id}`} passHref>
-                      <Button variant="link" className="mt-2 p-0">View Hospital</Button>
+                      <Button variant="link" className="mt-2 p-0" asChild>View Hospital</Button>
                     </Link>
                   </CardContent>
                 </Card>

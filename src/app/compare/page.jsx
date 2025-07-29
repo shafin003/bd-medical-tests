@@ -125,12 +125,12 @@ export default function ComparePage() {
           {/* Test Selection */}
           <div>
             <Label htmlFor="test-select" className="mb-2 block">Select a Specific Test (Optional):</Label>
-            <Select onValueChange={setTestId} value={testId}>
+            <Select onValueChange={(value) => setTestId(value === "none" ? null : value)} value={testId || "none"}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a Test" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">-- No Specific Test --</SelectItem>
+                <SelectItem value="none">-- No Specific Test --</SelectItem>
                 {availableTests.map((test) => (
                   <SelectItem key={test.id} value={test.id}>
                     {test.name}

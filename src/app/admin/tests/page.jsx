@@ -49,6 +49,95 @@ export default function AdminTestsPage() {
   const [selectedTestForBulkUpdate, setSelectedTestForBulkUpdate] = useState(null);
   const [bulkPriceUpdates, setBulkPriceUpdates] = useState([]);
 
+  const handleSelectTestForBulkUpdate = async (testId) => {
+    setSelectedTestForBulkUpdate(testId);
+    if (!testId) {
+      setBulkPriceUpdates([]);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/admin/prices/test/${testId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const formattedData = data.map(service => ({
+        ...service,
+        hospital_name: service.hospitals.name,
+        new_price: service.price,
+        new_discounted_price: service.discounted_price,
+        new_home_collection_fee: service.home_collection_fee,
+      }));
+      setBulkPriceUpdates(formattedData);
+    } catch (err) {
+      console.error("Error fetching bulk prices:", err);
+      setError("Failed to load prices for bulk update.");
+      toast({
+        title: "Error",
+        description: "Failed to load prices for bulk update. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBulkPriceChange = (serviceId, field, value) => {
+    setBulkPriceUpdates(prevUpdates =>
+      prevUpdates.map(service =>
+        service.id === serviceId ? { ...service, [field]: value } : service
+      )
+    );
+  };
+
+  const handleSaveBulkUpdates = async () => {
+    setLoading(true);
+    setError(null);
+
+    const updatesToSend = bulkPriceUpdates.map(service => ({
+      id: service.id,
+      price: service.new_price,
+      discounted_price: service.new_discounted_price,
+      home_collection_fee: service.new_home_collection_fee,
+    }));
+
+    try {
+      const response = await fetch('/api/admin/prices', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatesToSend),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      toast({
+        title: "Bulk Update Successful",
+        description: "Prices have been updated successfully.",
+      });
+      setBulkPriceUpdates([]);
+      setSelectedTestForBulkUpdate(null);
+    } catch (err) {
+      console.error("Error saving bulk updates:", err);
+      setError("Failed to save bulk updates.");
+      toast({
+        title: "Error",
+        description: "Failed to save bulk updates. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Bulk Price Update states
+  const [selectedTestForBulkUpdate, setSelectedTestForBulkUpdate] = useState(null);
+  const [bulkPriceUpdates, setBulkPriceUpdates] = useState([]);
+
   const resetTestForm = () => {
     setTestName('');
     setTestCategoryId('');
@@ -625,7 +714,8 @@ export default function AdminTestsPage() {
     </div>
   );
 }
-          <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+
+      <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={resetCategoryForm}>Add New Category</Button>
             </DialogTrigger>

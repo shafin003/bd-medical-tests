@@ -47,32 +47,36 @@ export function Header() {
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <Link href="/" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Home
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                onClick={() => router.push("/")}
+              >
+                Home
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/browse-tests" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Browse Tests
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                onClick={() => router.push("/browse-tests")}
+              >
+                Browse Tests
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/browse-hospitals" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Browse Hospitals
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                onClick={() => router.push("/browse-hospitals")}
+              >
+                Browse Hospitals
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/compare" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Compare
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                onClick={() => router.push("/compare")}
+              >
+                Compare
+              </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
@@ -125,16 +129,16 @@ export function Header() {
                 </SheetDescription>
               </SheetHeader>
               <nav className="grid gap-4 py-6">
-                <Link href="/" className="text-lg font-semibold" prefetch={false}>
+                <Link href="/" className="text-lg font-semibold">
                   Home
                 </Link>
-                <Link href="/browse-tests" className="text-lg font-semibold" prefetch={false}>
+                <Link href="/browse-tests" className="text-lg font-semibold">
                   Browse Tests
                 </Link>
-                <Link href="/browse-hospitals" className="text-lg font-semibold" prefetch={false}>
+                <Link href="/browse-hospitals" className="text-lg font-semibold">
                   Browse Hospitals
                 </Link>
-                <Link href="/compare" className="text-lg font-semibold" prefetch={false}>
+                <Link href="/compare" className="text-lg font-semibold">
                   Compare
                 </Link>
                 <div className="mt-4 relative">
