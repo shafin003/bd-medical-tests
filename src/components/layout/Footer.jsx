@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t bg-card text-card-foreground py-12">
-      <div className="container grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="border-t bg-card text-card-foreground py-12 flex flex-col items-center">
+      <div className="container px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Column 1: About Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">MediTest BD</h3>
@@ -77,11 +77,11 @@ export function Footer() {
               </Link>
             </li>
           </ul>
-          {/* Social links can be added here */} 
+          {/* Social links can be added here */}
         </div>
       </div>
 
-      <div className="container text-center text-sm text-muted-foreground mt-8 pt-8 border-t border-border">
+      <div className="container px-4 text-center text-sm text-muted-foreground mt-8 pt-8 border-t border-border">
         &copy; {new Date().getFullYear()} MediTest BD. All rights reserved.
       </div>
     </footer>

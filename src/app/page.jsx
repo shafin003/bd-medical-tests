@@ -58,7 +58,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-14rem)] py-12">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-500 to-teal-500 text-white">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-500 to-teal-500 text-white border border-gray-600">
         <div className="container px-4 md:px-6 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
