@@ -16,7 +16,7 @@ The platform serves two primary purposes:
 -   **Database & Authentication**: Supabase (PostgreSQL database, Authentication, and Storage)
 -   **Styling**: Tailwind CSS
 -   **UI Components**: Shadcn/ui (re-usable components built with Radix UI and Tailwind CSS)
--   **Type Checking**: TypeScript (for API routes and utility functions)
+-   **Type Checking**: JavaScript (for API routes and utility functions)
 -   **Linting**: ESLint
 
 ## 3. Folder Structure
@@ -32,10 +32,10 @@ bd-medical-tests/
 ├───src/
 │   ├───app/
 │   │   ├───(root)
-│   │   │   ├───favicon.ico
-│   │   │   ├───globals.css
-│   │   │   ├───layout.jsx          // Main application layout
-│   │   │   └───page.jsx            // Public home page
+│   │   ├───favicon.ico
+│   │   ├───globals.css
+│   │   ├───layout.jsx          // Main application layout
+│   │   └───page.jsx            // Public home page
 │   │   ├───admin/                  // Admin panel routes
 │   │   │   ├───analytics/
 │   │   │   │   └───page.jsx        // Admin analytics dashboard
@@ -51,38 +51,38 @@ bd-medical-tests/
 │   │   ├───api/                    // Next.js API Routes
 │   │   │   ├───admin/              // Admin-specific API routes (protected)
 │   │   │   │   ├───analytics/
-│   │   │   │   │   └───route.ts    // API for admin analytics
+│   │   │   │   │   └───route.js    // API for admin analytics
 │   │   │   │   ├───hospitals/
-│   │   │   │   │   ├───route.ts    // API for hospital CRUD
+│   │   │   │   │   ├───route.js    // API for hospital CRUD
 │   │   │   │   │   └───[id]/
-│   │   │   │   │       └───route.ts// API for specific hospital CRUD
+│   │   │   │   │       └───route.js// API for specific hospital CRUD
 │   │   │   │   ├───prices/
-│   │   │   │   │   ├───route.ts    // API for price updates
+│   │   │   │   │   ├───route.js    // API for price updates
 │   │   │   │   │   └───test/
 │   │   │   │   │       └───[testId]/
-│   │   │   │   │           └───route.ts // API for test prices
+│   │   │   │   │           └───route.js // API for test prices
 │   │   │   │   ├───test-categories/
-│   │   │   │   │   ├───route.ts    // API for test category CRUD
+│   │   │   │   │   ├───route.js    // API for test category CRUD
 │   │   │   │   │   └───[id]/
-│   │   │   │   │       └───route.ts // API for specific test category CRUD
+│   │   │   │   │       └───route.js // API for specific test category CRUD
 │   │   │   │   └───tests/
-│   │   │   │       ├───route.ts    // API for test CRUD
+│   │   │   │       ├───route.js    // API for test CRUD
 │   │   │   │       └───[id]/
-│   │   │   │           └───route.ts // API for specific test CRUD
+│   │   │   │           └───route.js // API for specific test CRUD
 │   │   │   ├───compare/
-│   │   │   │   └───route.ts        // API for test comparison
+│   │   │   │   └───route.js        // API for test comparison
 │   │   │   ├───hospitals/
-│   │   │   │   ├───route.ts        // Public API for hospitals
+│   │   │   │   ├───route.js        // Public API for hospitals
 │   │   │   │   └───[id]/
-│   │   │   │       └───route.ts    // Public API for specific hospital
+│   │   │   │       └───route.js    // Public API for specific hospital
 │   │   │   ├───search/
-│   │   │   │   ├───route.ts        // Public API for search
+│   │   │   │   ├───route.js        // Public API for search
 │   │   │   │   └───autocomplete/
-│   │   │   │       └───route.ts    // Public API for search autocomplete
+│   │   │   │       └───route.js    // Public API for search autocomplete
 │   │   │   └───tests/
-│   │   │       ├───route.ts        // Public API for tests
+│   │   │       ├───route.js        // Public API for tests
 │   │   │       └───[id]/
-│   │   │           └───route.ts    // Public API for specific test
+│   │   │           └───route.js    // Public API for specific test
 │   │   ├───browse-hospitals/
 │   │   │   └───page.jsx
 │   │   ├───browse-tests/
@@ -141,11 +141,11 @@ bd-medical-tests/
 │   │   ├───supabase.js             // Client-side Supabase client
 │   │   ├───utils.ts                // Utility functions (e.g., cn for Tailwind)
 │   │   └───supabase/
-│   │       └───server.ts           // Server-side Supabase client for API routes/middleware
+│   │       └───server.js           // Server-side Supabase client for API routes/middleware
 │   └───types/
 │       ├───api.ts                  // TypeScript types for API data structures
 │       └───database.ts             // TypeScript types for Supabase database schema
-└───middleware.ts                   // Next.js Middleware for route protection
+└───middleware.js                   // Next.js Middleware for route protection
 ```
 
 ## 4. Authentication Flow
@@ -153,8 +153,8 @@ bd-medical-tests/
 The authentication system is built using Supabase and integrated with Next.js:
 
 -   **Client-Side Supabase (`src/lib/supabase.js`)**: Used in React components for user login/logout and direct client-side data fetching (for public data).
--   **Server-Side Supabase (`src/lib/supabase/server.ts`)**: Used in Next.js API routes and Middleware. This client is crucial for secure server-side operations and for handling authentication cookies. It correctly sets and retrieves cookies to maintain session state across requests.
--   **Next.js Middleware (`middleware.ts`)**:
+-   **Server-Side Supabase (`src/lib/supabase/server.js`)**: Used in Next.js API routes and Middleware. This client is crucial for secure server-side operations and for handling authentication cookies. It correctly sets and retrieves cookies to maintain session state across requests.
+-   **Next.js Middleware (`middleware.js`)**:
     -   Protects all routes under `/admin` and `/api/admin`.
     -   Checks for an active Supabase user session.
     -   If no active session is found, it redirects the user to `/admin/login`.
@@ -166,7 +166,7 @@ The authentication system is built using Supabase and integrated with Next.js:
     -   Displays a "Loading admin panel..." message while checking authentication status.
     -   Includes the `Toaster` component for displaying notifications across admin pages.
     -   Crucially, it *does not* redirect if the current path is `/admin/login`, preventing an infinite redirect loop.
--   **Session Persistence**: The combination of `middleware.ts` and `src/lib/supabase/server.ts` ensures that the Supabase session is properly managed and persisted across page refreshes and server-side requests by handling authentication tokens via cookies.
+-   **Session Persistence**: The combination of `middleware.js` and `src/lib/supabase/server.js` ensures that the Supabase session is properly managed and persisted across page refreshes and server-side requests by handling authentication tokens via cookies.
 
 ## 5. Data Management
 
