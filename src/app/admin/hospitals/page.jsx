@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Hospital } from '@/types/api';
 import { useRouter } from 'next/navigation';
 
 export default function AdminHospitalsPage() {
@@ -111,6 +110,7 @@ export default function AdminHospitalsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      console.log("Data received by frontend:", data);
       setHospitals(data);
     } catch (err) {
       console.error("Error fetching hospitals:", err);

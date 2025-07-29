@@ -12,9 +12,17 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      const currentPath = window.location.pathname;
+
       if (!user) {
-        router.push('/admin/login');
+        if (currentPath !== '/admin/login') {
+          router.push('/admin/login');
+        } else {
+          // If we are already on the login page and no user, stop loading
+          setLoading(false);
+        }
       } else {
+        // If user exists, stop loading
         setLoading(false);
       }
     };
@@ -22,9 +30,16 @@ export default function AdminLayout({ children }) {
     checkUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const currentPath = window.location.pathname;
       if (!session) {
-        router.push('/admin/login');
+        if (currentPath !== '/admin/login') {
+          router.push('/admin/login');
+        } else {
+          // If we are already on the login page and no session, stop loading
+          setLoading(false);
+        }
       } else {
+        // If session exists, stop loading
         setLoading(false);
       }
     });

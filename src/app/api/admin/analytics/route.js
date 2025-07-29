@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase/server.js';
 
-// Helper function to check admin authentication
-async function isAdmin() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) {
-    return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
+export async function GET(request) {
+  const response = NextResponse.next();
+  const { supabase } = await createServerSupabaseClient(request, response);
+
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("Authentication error in analytics API:", userError);
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  return { authenticated: true, user };
-}
-
-export async function GET() {
-  const auth = await isAdmin();
-  if (!auth.authenticated) return auth.response;
 
   try {
     // Fetch popular searches
@@ -23,7 +21,7 @@ export async function GET() {
       .limit(10);
 
     if (popularSearchesError) {
-      console.error("Error fetching popular searches:", popularSearchesError);
+      console.error("Error fetching popular searches:", popularSearchesError.message || popularSearchesError);
       return NextResponse.json({ error: 'Failed to fetch popular searches' }, { status: 500 });
     }
 

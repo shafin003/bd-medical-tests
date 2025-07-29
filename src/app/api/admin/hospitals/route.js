@@ -1,20 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase/server.js';
 
 // Helper function to check admin authentication
-async function isAdmin() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) {
+async function isAdmin(request, response) {
+  const supabase = await createServerSupabaseClient(request, response);
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
     return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
   }
-  // In a real application, you would check user roles/metadata here
-  // For now, any logged-in user is considered admin for simplicity
-  return { authenticated: true, user };
+  return { authenticated: true, user, supabase };
 }
 
-export async function GET() {
-  const auth = await isAdmin();
-  if (!auth.authenticated) return auth.response;
+export async function GET(request) {
+  const response = NextResponse.next();
+  const { authenticated, response: authResponse, supabase } = await isAdmin(request, response);
+  if (!authenticated) return authResponse;
 
   try {
     const { data: hospitals, error } = await supabase
@@ -26,6 +27,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch hospitals' }, { status: 500 });
     }
 
+    console.log("Fetched hospitals:", hospitals);
     return NextResponse.json(hospitals || []);
   } catch (error) {
     console.error('Unexpected error fetching hospitals:', error);
@@ -34,8 +36,9 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const auth = await isAdmin();
-  if (!auth.authenticated) return auth.response;
+  const response = NextResponse.next();
+  const { authenticated, response: authResponse, supabase } = await isAdmin(request, response);
+  if (!authenticated) return authResponse;
 
   try {
     const newHospital = await request.json();
