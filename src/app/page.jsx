@@ -56,22 +56,22 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-14rem)] py-12">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-14rem)]">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-500 to-teal-500 text-white border border-gray-600">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-500 to-teal-500 text-white flex flex-col items-center">
         <div className="container px-4 md:px-6 text-center">
           <div className="max-w-3xl mx-auto space-y-6">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
               Compare Medical Test Prices in Bangladesh
             </h1>
-            <p className="text-xl md:text-2xl lg:text-3xl text-white/90">
+            <p className="text-l md:text-xl lg:text-xl text-white/90">
               Find the best prices for medical tests from top hospitals and diagnostic centers.
             </p>
             <div className="w-full max-w-xl mx-auto flex gap-2 relative">
               <Input
                 type="search"
                 placeholder="Search for tests, hospitals, or locations..."
-                className="flex-1 h-12 text-lg px-4 rounded-lg border-none focus:ring-2 focus:ring-blue-300 text-gray-900"
+                className="flex-1 h-12 text-lg px-4 rounded-lg border-none focus:ring-2 focus:ring-blue-800 text-gray-900 bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.length > 2 && autocompleteSuggestions.length > 0 && setShowSuggestions(true)}
@@ -84,11 +84,11 @@ export default function Home() {
               />
               <Button
                 size="lg"
-                className="h-12 px-6 bg-white text-blue-600 hover:bg-gray-100 hover:text-blue-700 rounded-lg"
+                className="h-12 px-6 bg-white text-sky-600 font-semibold hover:bg-gray-100 hover:text-white hover:bg-sky-600 cursor-pointer [transition:all_0.3s_ease-in-out] rounded-lg"
                 onClick={handleSearch}
                 disabled={loading}
               >
-                {loading ? "Searching..." : <><Search className="h-5 w-5 mr-2" /> Search</>}
+                {loading ? "Searching..." : <><Search className="h-5 w-5 font-semibold" /> Search</>}
               </Button>
               {showSuggestions && autocompleteSuggestions.length > 0 && (
                 <ul className="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -109,7 +109,7 @@ export default function Home() {
       </section>
 
       {/* Popular Tests Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-background flex flex-col items-center">
         <div className="container px-4 md:px-6">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Popular Medical Tests</h2>
@@ -164,7 +164,7 @@ export default function Home() {
       </section>
 
       {/* Featured Hospitals Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-muted flex flex-col items-center">
         <div className="container px-4 md:px-6">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Featured Hospitals</h2>
@@ -212,7 +212,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-background flex flex-col items-center">
         <div className="container px-4 md:px-6">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How It Works</h2>
