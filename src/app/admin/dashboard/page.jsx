@@ -36,7 +36,9 @@ export default function AdminDashboardPage() {
     });
 
     return () => {
-      authListener?.unsubscribe();
+      if (authListener) {
+        authListener.subscription?.unsubscribe();
+      }
     };
   }, [router, supabase]);
 

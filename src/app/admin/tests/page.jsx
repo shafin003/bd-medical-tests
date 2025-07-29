@@ -21,7 +21,7 @@ export default function AdminTestsPage() {
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [currentTest, setCurrentTest] = useState(null); // For editing tests
   const [currentCategory, setCurrentCategory] = useState(null); // For editing categories
-  const { toast } = useToast();
+  const { addToast } = useToast();
 
   // Test Form states
   const [testName, setTestName] = useState('');
@@ -75,7 +75,7 @@ export default function AdminTestsPage() {
     } catch (err) {
       console.error("Error fetching bulk prices:", err);
       setError("Failed to load prices for bulk update.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to load prices for bulk update. Please try again.",
         variant: "destructive",
@@ -115,7 +115,7 @@ export default function AdminTestsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: "Bulk Update Successful",
         description: "Prices have been updated successfully.",
       });
@@ -124,7 +124,7 @@ export default function AdminTestsPage() {
     } catch (err) {
       console.error("Error saving bulk updates:", err);
       setError("Failed to save bulk updates.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to save bulk updates. Please try again.",
         variant: "destructive",
@@ -133,10 +133,6 @@ export default function AdminTestsPage() {
       setLoading(false);
     }
   };
-
-  // Bulk Price Update states
-  const [selectedTestForBulkUpdate, setSelectedTestForBulkUpdate] = useState(null);
-  const [bulkPriceUpdates, setBulkPriceUpdates] = useState([]);
 
   const resetTestForm = () => {
     setTestName('');
@@ -268,7 +264,7 @@ export default function AdminTestsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: currentTest ? "Test Updated" : "Test Added",
         description: currentTest ? "Test details have been updated." : "New test has been added.",
       });
@@ -278,7 +274,7 @@ export default function AdminTestsPage() {
     } catch (err) {
       console.error("Error saving test:", err);
       setError("Failed to save test.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to save test. Please try again.",
         variant: "destructive",
@@ -302,7 +298,7 @@ export default function AdminTestsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: "Test Deleted",
         description: "Test has been successfully deleted.",
       });
@@ -310,7 +306,7 @@ export default function AdminTestsPage() {
     } catch (err) {
       console.error("Error deleting test:", err);
       setError("Failed to delete test.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to delete test. Please try again.",
         variant: "destructive",
@@ -352,7 +348,7 @@ export default function AdminTestsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: currentCategory ? "Category Updated" : "Category Added",
         description: currentCategory ? "Category details have been updated." : "New category has been added.",
       });
@@ -362,7 +358,7 @@ export default function AdminTestsPage() {
     } catch (err) {
       console.error("Error saving category:", err);
       setError("Failed to save category.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to save category. Please try again.",
         variant: "destructive",
@@ -386,7 +382,7 @@ export default function AdminTestsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: "Category Deleted",
         description: "Category has been successfully deleted.",
       });
@@ -394,7 +390,7 @@ export default function AdminTestsPage() {
     } catch (err) {
       console.error("Error deleting category:", err);
       setError("Failed to delete category.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to delete category. Please try again.",
         variant: "destructive",
@@ -714,8 +710,10 @@ export default function AdminTestsPage() {
     </div>
   );
 }
-
-      <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+    <div>
+      <Card>
+        <CardHeader>
+          <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={resetCategoryForm}>Add New Category</Button>
             </DialogTrigger>

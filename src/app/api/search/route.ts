@@ -14,7 +14,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     if (query) {
       const { data: rpcHospitals, error: rpcHospitalError } = await supabase.rpc('search_hospitals', { search_query: query });
       if (rpcHospitalError) throw rpcHospitalError;
-      const rpcHospitalIds = rpcHospitals.map((h: any) => h.id);
+      const rpcHospitalIds = rpcHospitals.map((h: Hospital) => h.id);
       if (rpcHospitalIds.length > 0) {
         hospitalQuery = hospitalQuery.in('id', rpcHospitalIds);
       } else {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     if (query) {
       const { data: rpcTests, error: rpcTestError } = await supabase.rpc('search_tests', { search_query: query });
       if (rpcTestError) throw rpcTestError;
-      const rpcTestIds = rpcTests.map((t: any) => t.id);
+      const rpcTestIds = rpcTests.map((t: MedicalTest) => t.id);
       if (rpcTestIds.length > 0) {
         testQuery = testQuery.in('id', rpcTestIds);
       } else {
@@ -147,8 +147,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
       case 'relevance':
       default:
         combinedResults.sort((a, b) => {
-          const rankA = (a as any).rank || 0;
-          const rankB = (b as any).rank || 0;
+          const rankA = a.rank || 0;
+          const rankB = b.rank || 0;
           return rankB - rankA;
         });
         break;
@@ -178,6 +178,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<SearchRes
     return NextResponse.json(response);
   } catch (error) {
     console.error('Search API error:', error);
-    return NextResponse.json({ error: 'Failed to perform search' } as any, { status: 500 });
+    return NextResponse.json({ error: 'Failed to perform search' }, { status: 500 });
   }
 }

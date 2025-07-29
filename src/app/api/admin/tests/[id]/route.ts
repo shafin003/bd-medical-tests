@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { MedicalTest } from '@/types/api';
 
 // Helper function to check admin authentication
-async function isAdmin(request: NextRequest) {
+async function isAdmin(_request: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) {
     return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
@@ -12,10 +12,10 @@ async function isAdmin(request: NextRequest) {
 }
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<NextResponse<MedicalTest | { error: string }>> {
-  const auth = await isAdmin(request);
+  const auth = await isAdmin(_request);
   if (!auth.authenticated) return auth.response;
 
   const testId = params.id;
@@ -47,10 +47,10 @@ export async function GET(
 }
 
 export async function PUT(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<NextResponse<MedicalTest | { error: string }>> {
-  const auth = await isAdmin(request);
+  const auth = await isAdmin(_request);
   if (!auth.authenticated) return auth.response;
 
   const testId = params.id;
@@ -82,10 +82,10 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<NextResponse<{ message: string } | { error: string }>> {
-  const auth = await isAdmin(request);
+  const auth = await isAdmin(_request);
   if (!auth.authenticated) return auth.response;
 
   const testId = params.id;

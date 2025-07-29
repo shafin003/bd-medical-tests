@@ -14,7 +14,6 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
-  const supabase = createClient();
 
   const handleLogin = async (e) => {
     e.preventDefault();

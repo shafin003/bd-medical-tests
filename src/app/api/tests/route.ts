@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { MedicalTest } from '@/types/api';
 
-export async function GET(request: NextRequest): Promise<NextResponse<{ tests: MedicalTest[] | null } | { error: string }>> {
+export async function GET(_request: NextRequest): Promise<NextResponse<{ tests: MedicalTest[] | null } | { error: string }>> {
   try {
     const { data: tests, error } = await supabase
       .from('medical_tests')

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
 // Helper function to check admin authentication
-async function isAdmin(request: NextRequest) {
+async function isAdmin(_request: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) {
     return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
@@ -10,8 +10,8 @@ async function isAdmin(request: NextRequest) {
   return { authenticated: true, user };
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse<{ popularSearches: any[] } | { error: string }>> {
-  const auth = await isAdmin(request);
+export async function GET(_request: NextRequest): Promise<NextResponse<{ popularSearches: any[] } | { error: string }>> {
+  const auth = await isAdmin(_request);
   if (!auth.authenticated) return auth.response;
 
   try {

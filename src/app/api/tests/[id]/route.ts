@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { MedicalTest, HospitalService, Hospital, TestCategory } from '@/types/api';
+import { MedicalTest, HospitalService, Hospital } from '@/types/api';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<NextResponse<MedicalTest | { error: string }>> {
   const testId = params.id;

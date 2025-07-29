@@ -17,7 +17,7 @@ export default function AdminHospitalsPage() {
   const [error, setError] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentHospital, setCurrentHospital] = useState(null); // For editing
-  const { toast } = useToast();
+  const { addToast } = useToast();
 
   // Form states
   const [name, setName] = useState('');
@@ -112,7 +112,7 @@ export default function AdminHospitalsPage() {
     } catch (err) {
       console.error("Error fetching hospitals:", err);
       setError("Failed to load hospitals.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to load hospitals. Please try again.",
         variant: "destructive",
@@ -179,7 +179,7 @@ export default function AdminHospitalsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: currentHospital ? "Hospital Updated" : "Hospital Added",
         description: currentHospital ? "Hospital details have been updated." : "New hospital has been added.",
       });
@@ -189,7 +189,7 @@ export default function AdminHospitalsPage() {
     } catch (err) {
       console.error("Error saving hospital:", err);
       setError("Failed to save hospital.");
-      toast({
+      addToast({
         title: "Error",
         description: "Failed to save hospital. Please try again.",
         variant: "destructive",
@@ -213,7 +213,7 @@ export default function AdminHospitalsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      toast({
+      addToast({
         title: "Hospital Deleted",
         description: "Hospital has been successfully deleted.",
       });

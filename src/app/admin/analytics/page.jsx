@@ -8,7 +8,7 @@ export default function AdminAnalyticsPage() {
   const [popularSearches, setPopularSearches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { toast } = useToast();
+  const { addToast } = useToast();
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
@@ -24,7 +24,7 @@ export default function AdminAnalyticsPage() {
       } catch (err) {
         console.error("Error fetching analytics data:", err);
         setError("Failed to load analytics data. Please try again.");
-        toast({
+        addToast({
           title: "Error",
           description: "Failed to load analytics data. Please try again.",
           variant: "destructive",

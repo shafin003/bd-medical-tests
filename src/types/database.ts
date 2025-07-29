@@ -1,4 +1,5 @@
 export interface Hospital {
+  rank?: number;
   id: string;
   name: string;
   city: string;
@@ -33,6 +34,8 @@ export interface Hospital {
 }
 
 export interface MedicalTest {
+  rank?: number;
+  category_name?: string;
   id: string;
   name: string;
   category_id: string;
