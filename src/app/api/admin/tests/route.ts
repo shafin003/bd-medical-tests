@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { MedicalTest } from '@/types/api';
 
 // Helper function to check admin authentication
-async function isAdmin(_request: NextRequest) {
+async function isAdmin() {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) {
     return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
@@ -11,8 +11,8 @@ async function isAdmin(_request: NextRequest) {
   return { authenticated: true, user };
 }
 
-export async function GET(_request: NextRequest): Promise<NextResponse<MedicalTest[] | { error: string }>> {
-  const auth = await isAdmin(_request);
+export async function GET(): Promise<NextResponse<MedicalTest[] | { error: string }>> {
+  const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
   try {
@@ -32,8 +32,8 @@ export async function GET(_request: NextRequest): Promise<NextResponse<MedicalTe
   }
 }
 
-export async function POST(_request: NextRequest): Promise<NextResponse<MedicalTest | { error: string }>> {
-  const auth = await isAdmin(_request);
+export async function POST(request: NextRequest): Promise<NextResponse<MedicalTest | { error: string }>> {
+  const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
   try {

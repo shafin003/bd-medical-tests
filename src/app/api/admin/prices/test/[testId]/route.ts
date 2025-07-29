@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { HospitalService, Hospital, MedicalTest } from '@/types/api';
 
 // Helper function to check admin authentication
-async function isAdmin(_request: NextRequest) {
+async function isAdmin() {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) {
     return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
@@ -12,10 +12,10 @@ async function isAdmin(_request: NextRequest) {
 }
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { testId: string } }
 ): Promise<NextResponse<(HospitalService & { hospitals: Hospital, medical_tests: MedicalTest })[] | { error: string }>> {
-  const auth = await isAdmin(_request);
+  const auth = await isAdmin();
   if (!auth.authenticated) return auth.response;
 
   const testId = params.testId;
