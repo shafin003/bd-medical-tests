@@ -1,81 +1,107 @@
-"use client";
+// src/app/admin/login/page.jsx
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { useToast } from '@/components/ui/use-toast'
 
-export default function AdminLoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const router = useRouter();
+export default function AdminLogin() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const { toast } = useToast()
+
+  // Create browser client for client-side operations
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+    setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      });
+      })
 
       if (error) {
-        throw error;
+        toast({
+          title: 'Login Failed',
+          description: error.message,
+          variant: 'destructive',
+        })
+        setLoading(false)
+        return
       }
 
-      router.push('/admin/dashboard'); // Redirect to admin dashboard on success
-    } catch (err) {
-      setError(err.message || 'An unexpected error occurred');
-      console.error("Login error:", err);
+      if (data.user) {
+        toast({
+          title: 'Login Successful',
+          description: 'Welcome to the admin panel!',
+        })
+        router.push('/admin/dashboard')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      toast({
+        title: 'Login Failed',
+        description: 'An unexpected error occurred',
+        variant: 'destructive',
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-14rem)] py-12">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
-          <CardDescription>Enter your credentials to access the admin dashboard.</CardDescription>
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="grid gap-2">
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@example.com"
-                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
               />
             </div>
-            <div className="grid gap-2">
+            <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
-                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

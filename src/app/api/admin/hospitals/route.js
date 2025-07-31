@@ -1,60 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server.js';
+// src/app/api/admin/hospitals/route.js
+import { authenticateUser } from '@/lib/auth'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
 
-// Helper function to check admin authentication
-async function isAdmin(request) {
-  const response = NextResponse.next();
-  const supabase = await createServerSupabaseClient(request, response);
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  }
-  return { authenticated: true, user, supabase, response };
-}
-
-export async function GET(request) {
-  const { authenticated, response: authResponse, supabase, response } = await isAdmin(request);
-  if (!authenticated) return authResponse;
+export async function GET() {
+  // Authenticate user
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
   try {
-    const { data: hospitals, error } = await supabase
-      .from('hospitals')
-      .select('*');
+    const supabase = createServerSupabaseClient()
 
-    if (error) {
-      console.error("Error fetching hospitals:", error);
-      return response.json({ error: 'Failed to fetch hospitals' }, { status: 500 });
+    const { data: hospitals, error: fetchError } = await supabase
+      .from('hospitals')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (fetchError) {
+      return NextResponse.json(
+        { error: 'Failed to fetch hospitals' },
+        { status: 500 }
+      )
     }
 
-    return response.json(hospitals || []);
+    return NextResponse.json(hospitals)
   } catch (error) {
-    console.error('Unexpected error fetching hospitals:', error);
-    return response.json({ error: 'Failed to fetch hospitals' }, { status: 500 });
+    console.error('Error fetching hospitals:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
 export async function POST(request) {
-  const { authenticated, response: authResponse, supabase, response } = await isAdmin(request);
-  if (!authenticated) return authResponse;
+  // Authenticate user
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
   try {
-    const newHospital = await request.json();
+    const hospitalData = await request.json()
+    const supabase = createServerSupabaseClient()
 
-    const { data, error } = await supabase
+    const { data: hospital, error: insertError } = await supabase
       .from('hospitals')
-      .insert([newHospital])
+      .insert([hospitalData])
       .select()
-      .single();
+      .single()
 
-    if (error) {
-      console.error("Error creating hospital:", error);
-      return response.json({ error: 'Failed to create hospital' }, { status: 500 });
+    if (insertError) {
+      return NextResponse.json(
+        { error: 'Failed to create hospital' },
+        { status: 500 }
+      )
     }
 
-    return response.json(data);
+    return NextResponse.json(hospital, { status: 201 })
   } catch (error) {
-    console.error('Unexpected error creating hospital:', error);
-    return response.json({ error: 'Failed to create hospital' }, { status: 500 });
+    console.error('Error creating hospital:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

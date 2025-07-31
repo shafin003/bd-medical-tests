@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import supabase from '@/lib/supabase';
 
 // Helper function to check admin authentication
 async function isAdmin() {

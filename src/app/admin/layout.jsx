@@ -1,60 +1,99 @@
-"use client";
+// src/app/admin/layout.jsx
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { Toaster } from "@/components/ui/toaster";
+import { useEffect, useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr'
+import { Toaster } from '@/components/ui/toaster'
 
 export default function AdminLayout({ children }) {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const pathname = usePathname()
+
+  // Create browser client for client-side operations
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  )
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const currentPath = window.location.pathname;
+    const getUser = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser()
 
-      if (!user) {
-        if (currentPath !== '/admin/login') {
-          router.push('/admin/login');
-        } else {
-          // If we are already on the login page and no user, stop loading
-          setLoading(false);
+        if (error) {
+          console.error('Auth error:', error)
+          if (pathname !== '/admin/login') {
+            router.push('/admin/login')
+          }
+          return
         }
-      } else {
-        // If user exists, stop loading
-        setLoading(false);
-      }
-    };
 
-    checkUser();
+        setUser(user)
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      const currentPath = window.location.pathname;
-      if (!session) {
-        if (currentPath !== '/admin/login') {
-          router.push('/admin/login');
-        } else {
-          // If we are already on the login page and no session, stop loading
-          setLoading(false);
+        // If no user and not on login page, redirect to login
+        if (!user && pathname !== '/admin/login') {
+          router.push('/admin/login')
         }
-      } else {
-        // If session exists, stop loading
-        setLoading(false);
+
+        // If user exists and on login page, redirect to dashboard
+        if (user && pathname === '/admin/login') {
+          router.push('/admin/dashboard')
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error)
+        if (pathname !== '/admin/login') {
+          router.push('/admin/login')
+        }
+      } finally {
+        setLoading(false)
       }
-    });
+    }
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [router]);
+    getUser()
 
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN') {
+          setUser(session.user)
+          if (pathname === '/admin/login') {
+            router.push('/admin/dashboard')
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null)
+          router.push('/admin/login')
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [router, pathname, supabase.auth])
+
+  // Show loading while checking auth
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p>Loading admin panel...</p>
+        <div className="text-lg">Loading admin panel...</div>
       </div>
-    );
+    )
+  }
+
+  // Always render login page
+  if (pathname === '/admin/login') {
+    return (
+      <>
+        {children}
+        <Toaster />
+      </>
+    )
+  }
+
+  // Only render admin content if user is authenticated
+  if (!user) {
+    return null // Will redirect via useEffect
   }
 
   return (
@@ -62,5 +101,5 @@ export default function AdminLayout({ children }) {
       {children}
       <Toaster />
     </>
-  );
+  )
 }
