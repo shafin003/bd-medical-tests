@@ -12,7 +12,6 @@ export async function GET() {
     const { data: categories, error: fetchError } = await supabase
       .from('test_categories')
       .select('*')
-      .order('created_at', { ascending: false })
 
     if (fetchError) {
       return NextResponse.json(

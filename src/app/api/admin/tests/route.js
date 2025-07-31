@@ -12,7 +12,6 @@ export async function GET() {
     const { data: medicalTests, error: fetchError } = await supabase
       .from('medical_tests')
       .select('*, test_categories(name)')
-      .order('created_at', { ascending: false })
 
     if (fetchError) {
       return NextResponse.json(
