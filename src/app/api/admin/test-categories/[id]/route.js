@@ -1,108 +1,69 @@
-import { NextRequest, NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
+// src/app/api/admin/test-categories/[id]/route.js
+import { authenticateUser } from '@/lib/auth'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
 
-// Helper function to check admin authentication
-async function isAdmin() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) {
-    return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  }
-  return { authenticated: true, user };
-}
+export async function PUT(request, { params }) {
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
-export async function GET(
-  request,
-  { params }
-) {
-  const auth = await isAdmin();
-  if (!auth.authenticated) return auth.response;
-
-  const categoryId = params.id;
+  const { id } = params
 
   try {
-    const { data: category, error } = await supabase
-      .from('test_categories')
-      .select('*')
-      .eq('id', categoryId)
-      .single();
+    const updatedCategory = await request.json()
+    const supabase = createServerSupabaseClient()
 
-    if (error) {
-      console.error(`Error fetching test category ${categoryId}:`, error);
-      if (error.code === 'PGRST116') { // No rows found
-        return NextResponse.json({ error: 'Test category not found' }, { status: 404 });
-      }
-      return NextResponse.json({ error: 'Failed to fetch test category' }, { status: 500 });
-    }
-
-    if (!category) {
-      return NextResponse.json({ error: 'Test category not found' }, { status: 404 });
-    }
-
-    return NextResponse.json(category);
-  } catch (error) {
-    console.error('Unexpected error fetching test category:', error);
-    return NextResponse.json({ error: 'Failed to fetch test category' }, { status: 500 });
-  }
-}
-
-export async function PUT(
-  request,
-  { params }
-) {
-  const auth = await isAdmin();
-  if (!auth.authenticated) return auth.response;
-
-  const categoryId = params.id;
-
-  try {
-    const updatedCategory = await request.json();
-
-    const { data, error } = await supabase
+    const { data: category, error: updateError } = await supabase
       .from('test_categories')
       .update(updatedCategory)
-      .eq('id', categoryId)
+      .eq('id', id)
       .select()
-      .single();
+      .single()
 
-    if (error) {
-      console.error(`Error updating test category ${categoryId}:`, error);
-      return NextResponse.json({ error: 'Failed to update test category' }, { status: 500 });
+    if (updateError) {
+      return NextResponse.json(
+        { error: `Failed to update test category ${id}` },
+        { status: 500 }
+      )
     }
 
-    if (!data) {
-      return NextResponse.json({ error: 'Test category not found or no changes made' }, { status: 404 });
-    }
-
-    return NextResponse.json(data);
+    return NextResponse.json(category)
   } catch (error) {
-    console.error('Unexpected error updating test category:', error);
-    return NextResponse.json({ error: 'Failed to update test category' }, { status: 500 });
+    console.error(`Error updating test category ${id}:`, error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
-export async function DELETE(
-  request,
-  { params }
-) {
-  const auth = await isAdmin();
-  if (!auth.authenticated) return auth.response;
+export async function DELETE(request, { params }) {
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
-  const categoryId = params.id;
+  const { id } = params
 
   try {
-    const { error } = await supabase
+    const supabase = createServerSupabaseClient()
+
+    const { error: deleteError } = await supabase
       .from('test_categories')
       .delete()
-      .eq('id', categoryId);
+      .eq('id', id)
 
-    if (error) {
-      console.error(`Error deleting test category ${categoryId}:`, error);
-      return NextResponse.json({ error: 'Failed to delete test category' }, { status: 500 });
+    if (deleteError) {
+      return NextResponse.json(
+        { error: `Failed to delete test category ${id}` },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ message: 'Test category deleted successfully' });
+    return NextResponse.json({ message: `Test category ${id} deleted successfully` })
   } catch (error) {
-    console.error('Unexpected error deleting test category:', error);
-    return NextResponse.json({ error: 'Failed to delete test category' }, { status: 500 });
+    console.error(`Error deleting test category ${id}:`, error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

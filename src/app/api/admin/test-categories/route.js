@@ -1,60 +1,63 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server.js';
+// src/app/api/admin/test-categories/route.js
+import { authenticateUser } from '@/lib/auth'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
 
-// Helper function to check admin authentication
-async function isAdmin(request) {
-  const response = NextResponse.next();
-  const supabase = await createServerSupabaseClient(request, response);
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  }
-  return { authenticated: true, user, supabase, response };
-}
-
-export async function GET(request) {
-  const { authenticated, response: authResponse, supabase, response } = await isAdmin(request);
-  if (!authenticated) return authResponse;
+export async function GET() {
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
   try {
-    const { data: categories, error } = await supabase
+    const supabase = createServerSupabaseClient()
+    const { data: categories, error: fetchError } = await supabase
       .from('test_categories')
-      .select('*');
+      .select('*')
+      .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error("Error fetching test categories:", error);
-      return response.json({ error: 'Failed to fetch test categories' }, { status: 500 });
+    if (fetchError) {
+      return NextResponse.json(
+        { error: 'Failed to fetch test categories' },
+        { status: 500 }
+      )
     }
 
-    return response.json(categories || []);
+    return NextResponse.json(categories)
   } catch (error) {
-    console.error('Unexpected error fetching test categories:', error);
-    return response.json({ error: 'Failed to fetch test categories' }, { status: 500 });
+    console.error('Error fetching test categories:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
 
 export async function POST(request) {
-  const { authenticated, response: authResponse, supabase, response } = await isAdmin(request);
-  if (!authenticated) return authResponse;
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
   try {
-    const newCategory = await request.json();
+    const newCategory = await request.json()
+    const supabase = createServerSupabaseClient()
 
-    const { data, error } = await supabase
+    const { data: category, error: insertError } = await supabase
       .from('test_categories')
       .insert([newCategory])
       .select()
-      .single();
+      .single()
 
-    if (error) {
-      console.error("Error creating test category:", error);
-      return response.json({ error: 'Failed to create test category' }, { status: 500 });
+    if (insertError) {
+      return NextResponse.json(
+        { error: 'Failed to create test category' },
+        { status: 500 }
+      )
     }
 
-    return response.json(data);
+    return NextResponse.json(category, { status: 201 })
   } catch (error) {
-    console.error('Unexpected error creating test category:', error);
-    return response.json({ error: 'Failed to create test category' }, { status: 500 });
+    console.error('Error creating test category:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

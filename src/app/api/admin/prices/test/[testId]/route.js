@@ -1,45 +1,35 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server.js';
+// src/app/api/admin/prices/test/[testId]/route.js
+import { authenticateUser } from '@/lib/auth'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
 
-// Helper function to check admin authentication
-async function isAdmin(request) {
-  const response = NextResponse.next();
-  const supabase = await createServerSupabaseClient(request, response);
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+export async function GET(request, { params }) {
+  const { user, error } = await authenticateUser()
+  if (error) return error
 
-  if (userError || !user) {
-    return { authenticated: false, response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) };
-  }
-  return { authenticated: true, user, supabase, response };
-}
-
-export async function GET(
-  request,
-  { params }
-) {
-  const { authenticated, response: authResponse, supabase, response } = await isAdmin(request);
-  if (!authenticated) return authResponse;
-
-  const testId = params.testId;
+  const { testId } = params
 
   try {
-    const { data: services, error } = await supabase
-      .from('hospital_services')
-      .select(`
-        *,
-        hospitals (*),
-        medical_tests (*)
-      `)
-      .eq('test_id', testId);
+    const supabase = createServerSupabaseClient()
 
-    if (error) {
-      console.error(`Error fetching hospital services for test ${testId}:`, error);
-      return response.json({ error: 'Failed to fetch hospital services' }, { status: 500 });
+    const { data: prices, error: fetchError } = await supabase
+      .from('hospital_services')
+      .select('*, hospitals(name)')
+      .eq('test_id', testId)
+
+    if (fetchError) {
+      return NextResponse.json(
+        { error: `Failed to fetch prices for test ${testId}` },
+        { status: 500 }
+      )
     }
 
-    return response.json(services || []);
+    return NextResponse.json(prices)
   } catch (error) {
-    console.error('Unexpected error fetching hospital services:', error);
-    return response.json({ error: 'Failed to fetch hospital services' }, { status: 500 });
+    console.error(`Error fetching prices for test ${testId}:`, error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
