@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function PUT(request, { params }) {
-  const { user, error } = await authenticateUser()
+  const { error } = await authenticateUser()
   if (error) return error
 
   const { id } = params
@@ -38,7 +38,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const { user, error } = await authenticateUser()
+  const { error } = await authenticateUser()
   if (error) return error
 
   const { id } = params

@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   // Authenticate user
-  const { user, error } = await authenticateUser()
+  const { error } = await authenticateUser()
   if (error) return error
 
   try {
@@ -35,7 +35,7 @@ export async function GET() {
 
 export async function POST(request) {
   // Authenticate user
-  const { user, error } = await authenticateUser()
+  const { error } = await authenticateUser()
   if (error) return error
 
   try {

@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function PUT(request) {
-  const { user, error } = await authenticateUser()
+  const { error } = await authenticateUser()
   if (error) return error
 
   try {
